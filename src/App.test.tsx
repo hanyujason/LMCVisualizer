@@ -138,7 +138,8 @@ describe('classroom workflows', () => {
     click('▶ Run');
     tick(2, 20);
     expect(status()).toBe('Running');
-  });
+    // This deliberately renders 1,000 steps; shared CI runners need a longer wall-clock budget.
+  }, 30000);
   it('switches language, opens instructions and enables classroom view', () => {
     render(<App />);
     click('中文');
