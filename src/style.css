@@ -787,7 +787,13 @@ footer {
   white-space: nowrap;
 }
 .classroom .workspace {
-  grid-template-columns: minmax(550px, 1.8fr) minmax(350px, 1fr);
+  grid-template-columns: minmax(550px, 1.8fr) minmax(440px, 1fr);
+}
+.classroom .machine-svg {
+  max-height: 300px;
+}
+.classroom .memory-grid {
+  grid-template-columns: repeat(10, 1fr);
 }
 .classroom .editor-panel {
   display: none;

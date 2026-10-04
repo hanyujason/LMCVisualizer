@@ -157,4 +157,40 @@ describe('classroom workflows', () => {
     ).toBe('OUT\nHLT');
     expect(regs()[2]).toBe('OUT');
   });
+  it('exports a text file and releases its URL after download begins', () => {
+    const create = vi.fn(() => 'blob:lmc-test');
+    const revoke = vi.fn();
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: create });
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: revoke });
+    let exportedName = '';
+    const anchor = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      exportedName = this.download;
+      expect(this.href).toBe('blob:lmc-test');
+    });
+    render(<App />);
+    click('↓ Export');
+    expect(exportedName).toBe('program.lmc');
+    expect(create.mock.calls.length).toBe(1);
+    expect(revoke).not.toHaveBeenCalled();
+    tick(25);
+    expect(revoke).toHaveBeenCalledWith('blob:lmc-test');
+    anchor.mockRestore();
+  });
+  it('loads imported text but requires assembly before running', async () => {
+    render(<App />);
+    const file = { size: 20, text: () => Promise.resolve('OUT\nHLT') };
+    await act(async () => {
+      fireEvent.change(document.querySelector('input[type=file]')!, { target: { files: [file] } });
+    });
+    expect(
+      (screen.getByRole('textbox', { name: 'LMC assembly program' }) as HTMLTextAreaElement).value,
+    ).toBe('OUT\nHLT');
+    expect((screen.getByRole('button', { name: '▶ Run' }) as HTMLButtonElement).disabled).toBe(
+      true,
+    );
+    click('Assemble & load →');
+    expect(regs()[2]).toBe('OUT');
+  });
 });

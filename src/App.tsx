@@ -42,8 +42,9 @@ export default function App() {
   const [machine, setMachine] = useState<Machine>(() => machineFor(program));
   const [errors, setErrors] = useState<Diagnostic[]>([]);
   const initialExample = examples.find((e) => e.source === initial.source) ?? examples[0];
-  const [example, setExample] = useState(initialExample.id);
-  const [input, setInput] = useState(initialExample.input);
+  const custom = initial.source !== undefined && !examples.some((e) => e.source === initial.source);
+  const [example, setExample] = useState(custom ? 'custom' : initialExample.id);
+  const [input, setInput] = useState(custom ? '' : initialExample.input);
   const [inputError, setInputError] = useState(false);
   const [pending, setPending] = useState<Pending | null>(null);
   const [playing, setPlaying] = useState(false);
@@ -198,7 +199,8 @@ export default function App() {
     a.href = url;
     a.download = 'program.lmc';
     a.click();
-    URL.revokeObjectURL(url);
+    // Let the browser begin the download before releasing the blob URL.
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
   const activePC = pending?.trace.pc ?? machine.pc;
   const selectedWord = machine.memory[selected];
@@ -283,6 +285,9 @@ export default function App() {
               onChange={(e) => choose(e.target.value)}
               disabled={busy}
             >
+              {example === 'custom' && (
+                <option value="custom">{t('Custom program', '自定义程序')}</option>
+              )}
               {examples.map((e) => (
                 <option key={e.id} value={e.id}>
                   {lang === 'en' ? e.en : e.zh}
@@ -311,6 +316,7 @@ export default function App() {
                 }}
                 onChange={(e) => {
                   setSource(e.target.value);
+                  setExample('custom');
                   setErrors([]);
                 }}
                 onKeyDown={(e) => {
@@ -352,6 +358,7 @@ export default function App() {
                       );
                     } else {
                       setSource(await f.text());
+                      setExample('custom');
                       setErrors([]);
                     }
                   }
