@@ -2,9 +2,17 @@
 
 An interactive **Little Man Computer** for teaching how instructions, memory and a CPU work together. Built from Jason Han's original JavaFX animation concept, with a new TypeScript simulator and browser interface.
 
+**Teaching preview · v0.1**
+
+[Open the live demo](https://hanyujason.github.io/LMCVisualizer/) · [中文使用说明](使用说明.md) · [Original JavaFX prototype](https://github.com/hanyujason/LMCAnimation)
+
+![LMC Lab workbench](docs/screenshot.jpg)
+
+The original concept and JavaFX prototype were independently developed by Jason. This web version was rebuilt with AI assistance; simulator behavior and classroom workflows are covered by automated tests.
+
 ## Run locally
 
-Requires Node.js 24 LTS (installed on this Mac).
+Requires Node.js 24 LTS.
 
 ```sh
 npm install
@@ -76,9 +84,9 @@ src/style.css     responsive workbench and classroom layout
 
 The engine computes a complete next state; the animation presents that transition and commits it once. Pausing keeps the pending transition intact. Reset discards it. Editing the animation does not alter arithmetic rules.
 
-## Publishing later
+## Deployment
 
-`npm run build` produces a static `dist/` directory for GitHub Pages or another static host. The relative asset paths support a repository subdirectory. A local build is not a public deployment: this version has not been published or uploaded to GitHub.
+`npm run build` produces a static `dist/` directory. The Pages workflow tests and builds `main`, then deploys to GitHub Pages. Relative asset paths support the repository subdirectory. Pull requests run checks without deploying.
 
 ## Current limitations
 
@@ -88,4 +96,4 @@ The engine computes a complete next state; the animation presents that transitio
 - Not a PWA: after building/serving locally it needs no outside services, but an online deployment is not guaranteed to work without a network on its first load.
 - First-version diagnostics are in English even when the main UI is Chinese.
 
-The original JavaFX files remain untouched in `/Users/hyj/IntelliJ-workspace/LMCAnimation`.
+The original JavaFX implementation is preserved in [LMCAnimation](https://github.com/hanyujason/LMCAnimation).
